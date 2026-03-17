@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ياسر الزناتي | Yasser Elzanaty - GIS Specialist</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0a0f1a;
+      --bg-card: #111827;
+      --accent: #22c55e;
+      --accent-glow: rgba(34, 197, 94, 0.3);
+      --accent-purple: #a855f7;
+      --accent-purple-glow: rgba(168, 85, 247, 0.25);
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Tajawal', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text);
+      direction: rtl;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+    }
+    body.lang-en { direction: ltr; }
+    .arabic { display: block; }
+    .english { display: none; }
+    body.lang-en .arabic { display: none; }
+    body.lang-en .english { display: block; }
+
+    /* Navbar - شريط علوي كامل: شعار، روابط، أزرار AR + باليت */
+    .site-nav {
+      background: var(--bg-dark);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 0.75rem 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 101;
+    }
+    .site-nav .nav-bar-inner {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .site-nav #navCollapse {
+      display: flex;
+      align-items: center;
+    }
+    .site-nav .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.25rem;
+      margin-inline-start: auto;
+    }
+    .site-nav .nav-toggler-btn {
+      display: none;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 8px;
+      padding: 0.4rem 0.6rem;
+      color: var(--text);
+    }
+    @media (max-width: 991px) {
+      .site-nav .nav-toggler-btn { display: inline-flex; }
+      .site-nav #navCollapse {
+        display: none;
+        width: 100%;
+        flex-basis: 100%;
+        order: 99;
+        padding-top: 0.5rem;
+        border-top: 1px solid rgba(255,255,255,0.08);
+      }
+      .site-nav #navCollapse.open {
+        display: flex;
+        flex-wrap: wrap;
+      }
+      .site-nav .nav-links { margin-inline-start: 0; width: 100%; justify-content: flex-start; }
+    }
+    .site-nav .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-weight: 800;
+      font-size: 1.35rem;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: -0.02em;
+    }
+    .site-nav .brand-dot {
+      width: 10px;
+      height: 10px;
+      background: var(--accent);
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+    .site-nav .nav-links a:first-of-type { margin-inline-end: 0; }
+    .site-nav .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      transition: color 0.25s, border-color 0.25s;
+    }
+    .site-nav .nav-links a:hover { color: var(--text); }
+    .site-nav .nav-links a.active {
+      color: var(--accent);
+      border-bottom: 2px solid var(--accent);
+      border-radius: 0;
+      background: transparent;
+    }
+    .nav-links .lang-theme-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-inline-start: 1rem;
+    }
+    .lang-toggle,
+    .theme-toggle {
+      background: rgba(30, 41, 59, 0.8);
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,0.15);
+      padding: 0.45rem 0.85rem;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      transition: background 0.25s, border-color 0.25s, transform 0.2s;
+    }
+    .theme-toggle { padding: 0.45rem 0.65rem; }
+    .theme-toggle { font-size: 1.1rem; }
+    .lang-toggle:hover,
+    .theme-toggle:hover {
+      background: rgba(51, 65, 85, 0.9);
+      border-color: rgba(255,255,255,0.25);
+      transform: scale(1.03);
+    }
+    .navbar-toggler { border-color: var(--text-muted); }
+    .navbar-toggler-icon { filter: invert(1); }
+
+    /* Hero - مثل الصورة: صورة يسار، نص وأزرار يمين */
+    .hero {
+      min-height: 88vh;
+      display: flex;
+      align-items: center;
+      padding: 3rem 1.5rem 4rem;
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 70% 50% at 30% 50%, rgba(34, 197, 94, 0.08), transparent),
+                  radial-gradient(ellipse 50% 40% at 70% 30%, rgba(168, 85, 247, 0.06), transparent);
+      pointer-events: none;
+    }
+    .hero .hero-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+      max-width: 1000px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    @media (max-width: 768px) {
+      .hero .hero-inner { grid-template-columns: 1fr; text-align: center; }
+      .hero .hero-content { order: 2; }
+      .hero .profile-wrap { order: 1; justify-content: center; }
+      .hero .hero-btns { justify-content: center; }
+      .hero .hero-social { justify-content: center; }
+    }
+    .hero .profile-wrap {
+      display: flex;
+      justify-content: flex-end;
+      position: relative;
+      animation: heroFloat 4s var(--ease-smooth) infinite;
+    }
+    body.lang-en .hero .profile-wrap { justify-content: flex-start; }
+    @keyframes heroFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    .hero .profile-frame {
+      position: relative;
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      padding: 8px;
+      background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.2) 50%, #1a1a2e 100%);
+      box-shadow: 0 0 0 2px rgba(0,0,0,0.5), 0 0 50px var(--accent-glow), inset 0 0 30px rgba(0,0,0,0.2);
+    }
+    .hero .profile-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+      display: block;
+      border: 3px solid var(--bg-card);
+      transition: transform 0.5s var(--ease-out-expo);
+    }
+    .hero .profile-placeholder {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: var(--bg-card);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 5rem;
+      border: 3px solid var(--bg-card);
+    }
+    .hero .profile-wrap:hover .profile-img { transform: scale(1.02); }
+    .hero .hero-content { text-align: right; }
+    body.lang-en .hero .hero-content { text-align: left; }
+    .hero .hero-subtitle {
+      color: var(--accent);
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    .hero .hero-name {
+      font-size: 2.75rem;
+      font-weight: 800;
+      color: var(--accent);
+      margin-bottom: 1rem;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+    .hero .hero-desc {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      line-height: 1.7;
+      margin-bottom: 1.75rem;
+      max-width: 420px;
+    }
+    body.lang-en .hero .hero-desc { margin-left: 0; margin-right: 0; }
+    .hero .hero-btns { display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; }
+    .hero .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.9rem 1.75rem;
+      background: var(--accent);
+      color: var(--bg-dark);
+      font-weight: 700;
+      border-radius: 12px;
+      text-decoration: none;
+      transition: transform 0.3s var(--ease-out-expo), box-shadow 0.3s;
+      border: none;
+    }
+    .hero .hero-cta:hover { transform: translateY(-3px); box-shadow: 0 8px 28px var(--accent-glow); color: var(--bg-dark); }
+    .hero .hero-cta.cv-btn-hero {
+      background: var(--accent-purple);
+      color: #fff;
+    }
+    .hero .hero-cta.cv-btn-hero:hover { box-shadow: 0 8px 28px var(--accent-purple-glow); color: #fff; }
+    .hero .hero-social { display: flex; gap: 0.75rem; align-items: center; }
+    .hero .hero-social a {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: var(--bg-card);
+      border: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text);
+      transition: color 0.3s, border-color 0.3s, transform 0.2s;
+    }
+    .hero .hero-social a:hover { color: var(--accent); border-color: var(--accent); transform: scale(1.05); }
+    .hero .hero-social svg { width: 22px; height: 22px; fill: currentColor; }
+
+    /* Section titles */
+    .section-sub { color: var(--accent); font-size: 0.9rem; margin-bottom: 0.25rem; }
+    .section-title { color: var(--accent); font-size: 2rem; font-weight: 800; margin-bottom: 2rem; }
+
+    /* About */
+    #about { padding: 4rem 1rem; }
+    #about .about-desc { color: var(--accent); font-size: 1.1rem; margin-bottom: 0.5rem; }
+    #about .about-body { color: var(--text); margin-bottom: 2rem; max-width: 700px; }
+    .info-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .info-card {
+      background: var(--bg-card);
+      border-radius: 16px;
+      padding: 1.25rem;
+      border: 1px solid rgba(255,255,255,0.06);
+      transition: transform 0.35s var(--ease-out-expo), box-shadow 0.35s, border-color 0.3s;
+    }
+    .info-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+      border-color: rgba(34, 197, 94, 0.2);
+    }
+    .info-card .card-title { color: var(--accent); font-weight: 700; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem; }
+    .info-card .icon-box { width: 40px; height: 40px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #fff; }
+    .info-card .icon-box svg { width: 22px; height: 22px; }
+    .skills-list li .icon-box svg { width: 18px; height: 18px; }
+    .info-card .card-text { color: var(--text); margin: 0; font-size: 0.95rem; }
+    .skills-list { list-style: none; padding: 0; margin: 0; }
+    .skills-list li { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; color: var(--text); }
+    .skills-list li .icon-box { width: 32px; height: 32px; background: var(--accent); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #fff; flex-shrink: 0; }
+
+    /* Skills section - progress bars */
+    #skills { padding: 4rem 1rem; }
+    .skill-cat { margin-bottom: 2rem; }
+    .skill-cat h4 { color: var(--text); font-weight: 700; margin-bottom: 1rem; }
+    .skill-cat .lang-text { color: var(--text); font-size: 1.05rem; font-weight: 500; line-height: 1.6; }
+    .skill-row { margin-bottom: 1rem; }
+    .skill-row .d-flex { justify-content: space-between; margin-bottom: 0.35rem; }
+    .skill-row .name { color: var(--text); }
+    .skill-row .pct { color: var(--text-muted); font-size: 0.9rem; }
+    .skill-row .progress { height: 10px; background: var(--bg-card); border-radius: 6px; overflow: hidden; }
+    .skill-row .progress-bar { background: var(--accent); border-radius: 6px; transition: width 1s var(--ease-out-expo); }
+
+    /* Projects */
+    #projects { padding: 4rem 1rem; }
+    .project-card {
+      background: var(--bg-card);
+      border-radius: 16px;
+      padding: 1.5rem;
+      border: 1px solid rgba(255,255,255,0.06);
+      height: 100%;
+      transition: transform 0.35s var(--ease-out-expo), box-shadow 0.35s, border-color 0.3s;
+    }
+    .project-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.3);
+      border-color: rgba(34, 197, 94, 0.2);
+    }
+    .project-card .project-img-wrap {
+      height: 200px;
+      border-radius: 16px 16px 0 0;
+      overflow: hidden;
+      margin: -1.5rem -1.5rem 1rem -1.5rem;
+      background: var(--bg-dark);
+    }
+    .project-card .project-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s var(--ease-out-expo);
+    }
+    .project-card:hover .project-img { transform: scale(1.05); }
+    .project-card .tags { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.75rem; }
+    .project-card .tag { color: var(--accent); font-size: 0.8rem; font-weight: 600; }
+    .project-card h5 { color: var(--text); font-weight: 700; margin-bottom: 0.5rem; }
+    .project-card .desc { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem; }
+    .project-card .check-list { list-style: none; padding: 0; margin: 0; }
+    .project-card .check-list li { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.4rem; color: var(--text); font-size: 0.9rem; }
+    .project-card .check-list li::before { content: "✓"; color: var(--accent); font-weight: bold; }
+
+    /* Experience */
+    #experience { padding: 4rem 1rem; }
+    .exp-item {
+      background: var(--bg-card);
+      border-radius: 16px;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+      border: 1px solid rgba(255,255,255,0.06);
+      transition: transform 0.3s var(--ease-smooth), border-color 0.3s, box-shadow 0.3s;
+    }
+    .exp-item:hover { border-color: rgba(34, 197, 94, 0.2); box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
+    .exp-item h5 { color: var(--text); margin-bottom: 0.35rem; }
+    .exp-item .meta { color: var(--accent); font-size: 0.9rem; margin-bottom: 0.5rem; }
+    .exp-item p { color: var(--text-muted); margin: 0; font-size: 0.95rem; }
+    .exp-item .exp-list { list-style: none; padding: 0; margin: 0.5rem 0 0; }
+    .exp-item .exp-list li { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.4rem; padding-inline-start: 1.2rem; position: relative; }
+    .exp-item .exp-list li::before { content: '•'; color: var(--accent); position: absolute; inset-inline-start: 0; }
+
+    /* Certificates */
+    #certificates { padding: 4rem 1rem; }
+    .cert-card {
+      background: var(--bg-card);
+      border-radius: 16px;
+      padding: 1.5rem;
+      border: 1px solid rgba(255,255,255,0.06);
+      height: 100%;
+      transition: transform 0.35s var(--ease-out-expo), box-shadow 0.35s, border-color 0.3s;
+    }
+    .cert-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+      border-color: rgba(34, 197, 94, 0.2);
+    }
+    .cert-card .icon-box { width: 56px; height: 56px; background: var(--accent); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #fff; margin: 0 auto 1rem; }
+    .cert-card .icon-box svg { width: 28px; height: 28px; }
+    .cert-card h5 { color: var(--text); font-weight: 700; margin-bottom: 0.35rem; }
+    .cert-card .provider { color: var(--accent); font-size: 0.9rem; margin-bottom: 0.75rem; }
+    .cert-card p { color: var(--text-muted); font-size: 0.9rem; margin: 0; }
+
+    /* Contact */
+    #contact { padding: 4rem 1rem; text-align: center; }
+    #contact .section-sub { margin-bottom: 0; }
+    #contact .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; max-width: 600px; margin: 0 auto 2rem; justify-content: center; }
+    #contact .contact-btn {
+      background: var(--bg-card);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 1.25rem;
+      color: var(--text);
+      text-decoration: none;
+      display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+      transition: transform 0.3s var(--ease-out-expo), border-color 0.3s, box-shadow 0.3s;
+    }
+    #contact .contact-btn:hover {
+      transform: translateY(-4px) scale(1.02);
+      border-color: var(--accent);
+      color: var(--text);
+      box-shadow: 0 12px 32px var(--accent-glow);
+    }
+    #contact .contact-btn svg { width: 28px; height: 28px; fill: currentColor; }
+    #contact .cv-btn {
+      background: var(--bg-card);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 1rem 2rem;
+      color: var(--text);
+      text-decoration: none;
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      transition: transform 0.3s var(--ease-out-expo), border-color 0.3s, box-shadow 0.3s;
+    }
+    #contact .cv-btn:hover {
+      transform: translateY(-3px);
+      border-color: var(--accent);
+      color: var(--text);
+      box-shadow: 0 8px 28px var(--accent-glow);
+    }
+
+    /* Scroll to top */
+    .scroll-top {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 1.5rem;
+      width: 48px;
+      height: 48px;
+      background: var(--accent);
+      color: var(--bg-dark);
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 20px var(--accent-glow);
+      opacity: 0.9;
+      z-index: 50;
+      transition: transform 0.2s;
+    }
+    .scroll-top:hover { transform: scale(1.1); opacity: 1; box-shadow: 0 6px 24px var(--accent-glow); }
+    .scroll-top { transition: transform 0.25s var(--ease-out-expo), opacity 0.3s, box-shadow 0.3s; }
+    .scroll-top.hidden { display: none; }
+
+    body.light-theme {
+      --bg-dark: #f1f5f9;
+      --bg-card: #ffffff;
+      --text: #0f172a;
+      --text-muted: #475569;
+    }
+    body.light-theme .site-nav { background: rgba(241, 245, 249, 0.9); }
+
+    /* Container */
+    .container-custom { max-width: 1000px; margin: 0 auto; padding: 0 1rem; }
+
+    /* RTL/LTR nav order */
+    body.lang-en .site-nav .nav-order { flex-direction: row-reverse; }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="site-nav">
+    <div class="container-custom nav-bar-inner">
+      <a class="brand" href="#">
+        <span class="brand-dot"></span>
+        <span class="arabic">ياسر</span><span class="english">Yasser</span>
+      </a>
+      <button class="navbar-toggler nav-toggler-btn" type="button" aria-label="القائمة" onclick="document.getElementById('navCollapse').classList.toggle('open')">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="nav-order" id="navCollapse">
+        <div class="nav-links">
+          <a href="#home" class="active nav-link-item"><span class="arabic">الرئيسية</span><span class="english">Home</span></a>
+          <a href="#about" class="nav-link-item"><span class="arabic">من أنا</span><span class="english">About</span></a>
+          <a href="#skills" class="nav-link-item"><span class="arabic">المهارات</span><span class="english">Skills</span></a>
+          <a href="#projects" class="nav-link-item"><span class="arabic">المشاريع</span><span class="english">Projects</span></a>
+          <a href="#experience" class="nav-link-item"><span class="arabic">الخبرات</span><span class="english">Experience</span></a>
+          <a href="#certificates" class="nav-link-item"><span class="arabic">الشهادات</span><span class="english">Certificates</span></a>
+          <a href="#contact" class="nav-link-item"><span class="arabic">تواصل</span><span class="english">Contact</span></a>
+          <div class="lang-theme-wrap">
+            <button type="button" class="theme-toggle" onclick="toggleTheme()" title="وضع داكن/فاتح" aria-label="Theme">🎨</button>
+            <button type="button" class="lang-toggle" onclick="toggleLanguage()" title="ترجمة الموقع" aria-label="ترجمة الموقع">
+              <span class="arabic">AR</span><span class="english">EN</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero - مثل الصورة: صورة يسار، نص وأزرار يمين -->
+  <section id="home" class="hero">
+    <div class="hero-inner position-relative">
+      <div class="profile-wrap">
+        <div class="profile-frame">
+          <img src="assets/profile.png" alt="ياسر الزناتي - Yasser Elzanaty" class="profile-img" id="heroPhoto" onerror="this.style.display='none'; document.getElementById('heroPlaceholder').style.display='flex';">
+          <div id="heroPlaceholder" class="profile-placeholder" style="display:none;">👤</div>
+        </div>
+      </div>
+      <div class="hero-content">
+        <p class="hero-subtitle arabic">أخصائي نظم معلومات جغرافية</p>
+        <p class="hero-subtitle english">GIS Specialist</p>
+        <h1 class="hero-name"><span class="arabic">ياسر الزناتي</span><span class="english">Yasser Elzanaty</span></h1>
+        <p class="hero-desc arabic">أخصائي نظم معلومات جغرافية واستشعار عن بعد، خبرة قوية في التحليل المكاني ومراقبة البيئة ورسم خرائط الطاقة المتجددة. أقدّم بيانات دقيقة وتصورات وأدوات دعم قرار، مع قيادة فعالة والعمل الجماعي.</p>
+        <p class="hero-desc english">GIS and Remote Sensing specialist with strong expertise in spatial analysis, environmental monitoring, and renewable energy mapping. I deliver accurate datasets, visualizations, and decision-support tools, with proven leadership and teamwork.</p>
+        <div class="hero-btns">
+          <a href="#contact" class="hero-cta">
+            <span class="arabic">تواصل معي ←</span><span class="english">Contact me →</span>
+          </a>
+          <a href="https://drive.google.com/file/d/1JcWavjmuctkhMK3Iy5UBMgxiRmf0-VDw/view?usp=drive_link" class="hero-cta cv-btn-hero" target="_blank" rel="noopener">
+            <span class="arabic">تحميل السيرة الذاتية ↓</span><span class="english">Download CV ↓</span>
+          </a>
+        </div>
+        <div class="hero-social">
+          <a href="mailto:yasserelzanaty2@gmail.com" aria-label="Email" title="Email">✉️</a>
+          <a href="https://linkedin.com/in/yasser-elzanaty" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn">
+            <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          </a>
+          <a href="https://wa.me/201559332262" target="_blank" rel="noopener" aria-label="WhatsApp" title="WhatsApp">
+            <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section id="about">
+    <div class="container-custom">
+      <p class="section-sub text-center arabic">تعرف على</p>
+      <p class="section-sub text-center english">Get to know</p>
+      <h1 class="section-title text-center arabic">نبذة عني</h1>
+      <h1 class="section-title text-center english">About Me</h1>
+      <p class="about-desc text-center arabic">أنا أخصائي نظم معلومات جغرافية واستشعار عن بعد. أستخدم ArcGIS و QGIS و Google Earth Engine لتقديم بيانات دقيقة وتصورات وأدوات دعم قرار. أتميّز بالقيادة والتواصل والعمل الجماعي، وأسعى للمساهمة في التنمية المستدامة واتخاذ القرارات المكانية.</p>
+      <p class="about-desc text-center english">GIS and Remote Sensing specialist skilled in ArcGIS, QGIS, and Google Earth Engine. I deliver accurate datasets, visualizations, and decision-support tools. Recognized for leadership, communication, and teamwork. Seeking to contribute to sustainable development and geospatial decision-making.</p>
+      <p class="about-body text-center arabic">بكالوريوس جيوماتكس من جامعة الزقازيق – كلية الآداب (متوقع 2026، تقدير جيد جداً مرتفع). خبرة في Pantheros Labs و FlueroGen، ومشاركة في تحدي NASA Space Apps ويوم GIS العالمي.</p>
+      <p class="about-body text-center english">Bachelor of Geomatics from Zagazig University – Faculty of Arts (expected 2026, Very Good High). Experience at Pantheros Labs and FlueroGen; participant in NASA Space Apps Challenge and World GIS Day.</p>
+
+      <div class="row g-3 mb-4">
+        <div class="col-md-6">
+          <div class="info-card">
+            <div class="card-title"><span class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg></span><span class="arabic">التعليم</span><span class="english">Education</span></div>
+            <p class="card-text arabic">بكالوريوس جيوماتكس – جامعة الزقازيق، كلية الآداب. المتوقع: 2026. التقدير: جيد جداً (مرتفع)</p>
+            <p class="card-text english">Bachelor of Geomatics – Zagazig University, Faculty of Arts. Expected: 2026. Grade: Very Good (High)</p>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="info-card">
+            <div class="card-title"><span class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span><span class="arabic">الموقع</span><span class="english">Location</span></div>
+            <p class="card-text">Met Ghamr, Daqahliya, Egypt | +20 1559332262</p>
+          </div>
+        </div>
+      </div>
+
+      <h4 class="arabic" style="color: var(--text); margin-bottom: 1rem;">أبرز المهارات</h4>
+      <h4 class="english" style="color: var(--text); margin-bottom: 1rem;">Key Strengths</h4>
+      <ul class="skills-list">
+        <li><span class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="12" width="4" height="8"/><rect x="10" y="8" width="4" height="12"/><rect x="17" y="4" width="4" height="16"/></svg></span><span class="arabic">التحليل المكاني ومراقبة البيئة ورسم خرائط الطاقة المتجددة</span><span class="english">Spatial analysis, environmental monitoring, renewable energy mapping</span></li>
+        <li><span class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l6 3 8-4 6 3"/><path d="M2 18l6-3 8 4 6-3"/><path d="M8 9v6M16 5v6"/></svg></span><span class="arabic">ArcGIS, QGIS, Google Earth Pro, Google Earth Engine</span><span class="english">ArcGIS, QGIS, Google Earth Pro, Google Earth Engine</span></li>
+        <li><span class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 6 13.5 14.5 8.5 9.5 2 16"/><polyline points="16 6 22 6 22 12"/></svg></span><span class="arabic">لوحات التحكم وتطبيقات الويب (ArcGIS Online)</span><span class="english">Dashboards & web applications (ArcGIS Online)</span></li>
+        <li><span class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M9 8V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/><circle cx="9" cy="13" r="1"/><circle cx="15" cy="13" r="1"/></svg></span><span class="arabic">تطبيق نماذج الذكاء الاصطناعي في GIS والاستشعار عن بعد</span><span class="english">Application of AI in GIS and Remote Sensing</span></li>
+        <li><span class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span><span class="arabic">العربية: لغة أم · English: B1</span><span class="english">Arabic: Native · English: B1</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Skills -->
+  <section id="skills">
+    <div class="container-custom">
+      <p class="section-sub text-center arabic">ما أتقنه</p>
+      <p class="section-sub text-center english">What I use</p>
+      <h2 class="section-title text-center arabic">المهارات التقنية</h2>
+      <h2 class="section-title text-center english">Technical Skills</h2>
+
+      <div class="skill-cat">
+        <h4 class="arabic">البرمجة والتحليل</h4>
+        <h4 class="english">Programming & Analysis</h4>
+        <div class="skill-row">
+          <div class="d-flex"><span class="name">Python, ArcPy</span><span class="pct">85%</span></div>
+          <div class="progress"><div class="progress-bar" style="width: 85%"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="d-flex"><span class="name arabic">تصميم الخرائط وقواعد البيانات</span><span class="name english">Mapping & Geodatabases</span><span class="pct">90%</span></div>
+          <div class="progress"><div class="progress-bar" style="width: 90%"></div></div>
+        </div>
+      </div>
+      <div class="skill-cat">
+        <h4 class="arabic">تصور البيانات ونظم المعلومات الجغرافية</h4>
+        <h4 class="english">Data Visualization & GIS</h4>
+        <div class="skill-row">
+          <div class="d-flex"><span class="name">ArcGIS Pro, QGIS</span><span class="pct">95%</span></div>
+          <div class="progress"><div class="progress-bar" style="width: 95%"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="d-flex"><span class="name">AutoCAD, Civil 3D</span><span class="pct">80%</span></div>
+          <div class="progress"><div class="progress-bar" style="width: 80%"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="d-flex"><span class="name">Google Earth Pro, Google Earth Engine</span><span class="pct">85%</span></div>
+          <div class="progress"><div class="progress-bar" style="width: 85%"></div></div>
+        </div>
+      </div>
+      <div class="skill-cat">
+        <h4 class="arabic">اللغات</h4>
+        <h4 class="english">Languages</h4>
+        <p class="lang-text mb-0"><span class="arabic">العربية: لغة أم (طلاقة) · الإنجليزية: B1</span><span class="english">Arabic: Native (fluent) · English: B1</span></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Projects -->
+  <section id="projects">
+    <div class="container-custom">
+      <p class="section-sub text-center arabic">أعمالي</p>
+      <p class="section-sub text-center english">My work</p>
+      <h2 class="section-title text-center arabic">أبرز المشاريع</h2>
+      <h2 class="section-title text-center english">Featured Projects</h2>
+
+      <div class="row g-4">
+        <div class="col-md-6">
+          <div class="project-card">
+            <div class="project-img-wrap">
+              <img src="https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=600&q=80" alt="GIS تطبيقات ولوحات تحكم" class="project-img" loading="lazy">
+            </div>
+            <div class="tags"><span class="tag">ArcGIS Online</span><span class="tag">Dashboards</span></div>
+            <h5 class="arabic">تطبيقات ولوحات تحكم GIS</h5>
+            <h5 class="english">GIS Web Applications & Dashboards</h5>
+            <p class="desc arabic">تطوير تطبيقات ولوحات تحكم GIS باستخدام ArcGIS Online، وجمع بيانات ميدانية وخرائط موضوعية لدعم رؤى الأعمال (Pantheros Labs).</p>
+            <p class="desc english">Developed GIS web applications and dashboards using ArcGIS Online; field data collection and thematic maps for business insights (Pantheros Labs).</p>
+            <ul class="check-list">
+              <li class="arabic">تطبيقات ويب ولوحات تفاعلية</li><li class="english">Web apps and interactive dashboards</li>
+              <li class="arabic">جمع بيانات ميدانية ودمجها</li><li class="english">Field data collection and integration</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="project-card">
+            <div class="project-img-wrap">
+              <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=80" alt="تحليل مكاني وأتمتة" class="project-img" loading="lazy">
+            </div>
+            <div class="tags"><span class="tag">ArcGIS Pro</span><span class="tag">QGIS</span><span class="tag">Python</span></div>
+            <h5 class="arabic">تحليل مكاني وأتمتة سير العمل</h5>
+            <h5 class="english">Spatial Analysis & Workflow Automation</h5>
+            <p class="desc arabic">تحليل مكاني وخرائط وتصورات، دمج الاستشعار عن بعد، وسكربتات Python لأتمتة GIS وتحسين التكاليف (FlueroGen).</p>
+            <p class="desc english">Spatial analysis, maps and visualizations, remote sensing integration, Python scripts for GIS automation and cost optimization (FlueroGen).</p>
+            <ul class="check-list">
+              <li class="arabic">تحسين مكاني وتقليل التكاليف</li><li class="english">Spatial optimization and cost reduction</li>
+              <li class="arabic">مراقبة استخدام الأراضي والبيئة</li><li class="english">Land use and environmental monitoring</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="project-card">
+            <div class="project-img-wrap">
+              <img src="https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=600&q=80" alt="NASA Space Apps" class="project-img" loading="lazy">
+            </div>
+            <div class="tags"><span class="tag">NASA</span><span class="tag">Space Apps</span></div>
+            <h5 class="arabic">تحدي NASA Space Apps</h5>
+            <h5 class="english">NASA Space Apps Challenge</h5>
+            <p class="desc arabic">مشاركة مرتين (القاهرة وبورسعيد). مشروع القاهرة ضمن أفضل 10% من المشاريع المقدمة. مشروع بورسعيد حصل على المركز الخامس.</p>
+            <p class="desc english">Participated twice (Cairo and Port Said). Cairo project ranked among top 10% of submitted projects. Port Said project achieved 5th place overall.</p>
+            <ul class="check-list">
+              <li class="arabic">القاهرة: ضمن أفضل 10%</li><li class="english">Cairo: Top 10%</li>
+              <li class="arabic">بورسعيد: المركز الخامس</li><li class="english">Port Said: 5th place</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="project-card">
+            <div class="project-img-wrap">
+              <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&q=80" alt="World GIS Day" class="project-img" loading="lazy">
+            </div>
+            <div class="tags"><span class="tag">World GIS Day</span><span class="tag">الجمعية الجغرافية</span></div>
+            <h5 class="arabic">يوم GIS العالمي والأنشطة</h5>
+            <h5 class="english">World GIS Day & Activities</h5>
+            <p class="desc arabic">عرض مشروع GIS في يوم GIS العالمي بالجمعية الجغرافية المصرية (7 فبراير 2026). المركز الثاني في مسابقة الطالب المثالي بكلية الآداب – جامعة الزقازيق. مشاركة في معرض IWWI 2025 وحلقات الذكاء الاصطناعي في نظم المعلومات الجغرافية.</p>
+            <p class="desc english">Presented a GIS project at World GIS Day, Egyptian Geographical Society (Feb 7, 2026). 2nd place in Ideal Student Competition, Faculty of Arts, Zagazig University. IWWI Exhibition 2025; seminars on AI in GIS.</p>
+            <ul class="check-list">
+              <li class="arabic">عرض في يوم GIS العالمي</li><li class="english">World GIS Day presentation</li>
+              <li class="arabic">المركز الثاني – الطالب المثالي</li><li class="english">2nd place – Ideal Student</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Experience -->
+  <section id="experience">
+    <div class="container-custom">
+      <p class="section-sub text-center arabic">رحلتي</p>
+      <p class="section-sub text-center english">My journey</p>
+      <h2 class="section-title text-center arabic">خبرات عملية</h2>
+      <h2 class="section-title text-center english">Experience</h2>
+
+      <div class="exp-item">
+        <h5>FlueroGen</h5>
+        <p class="meta">2024 – 2025 · <span class="arabic">محلل نظم معلومات جغرافية / عالم بيانات مكانية</span><span class="english">GIS Analyst / Spatial Data Scientist</span></p>
+        <ul class="exp-list">
+          <li class="arabic">إجراء تحليل مكاني لتحديد الأنماط ودعم اتخاذ القرارات المعتمدة على الموقع.</li>
+          <li class="english">Conducted spatial analysis to identify patterns and support location-based decision-making.</li>
+          <li class="arabic">استخدام ArcGIS Pro و QGIS لإنشاء خرائط وتصورات مكانية تفصيلية.</li>
+          <li class="english">Utilized ArcGIS Pro and QGIS to create detailed maps and geospatial visualizations.</li>
+          <li class="arabic">دمج بيانات الاستشعار عن بعد لمراقبة استخدام الأراضي والبيئة.</li>
+          <li class="english">Integrated remote sensing data for land use and environmental monitoring.</li>
+          <li class="arabic">تطوير سكربتات Python لأتمتة سير عمل GIS وتحسين معالجة البيانات.</li>
+          <li class="english">Developed Python scripts for automating GIS workflows and improving data processing efficiency.</li>
+          <li class="arabic">المساهمة في خفض التكاليف التشغيلية عبر تقنيات التحسين المكاني.</li>
+          <li class="english">Contributed to reducing operational costs by applying spatial optimization techniques.</li>
+        </ul>
+      </div>
+      <div class="exp-item">
+        <h5>Pantheros Labs</h5>
+        <p class="meta">2023 – 2024 · <span class="arabic">أخصائي نظم معلومات جغرافية مبتدئ</span><span class="english">Junior GIS Specialist</span></p>
+        <ul class="exp-list">
+          <li class="arabic">تنظيف وتحويل وترميز مكاني لمجموعات بيانات من مصادر متعددة.</li>
+          <li class="english">Cleaned, transformed, and geocoded spatial datasets from various sources.</li>
+          <li class="arabic">المساعدة في تطوير تطبيقات ولوحات تحكم GIS باستخدام ArcGIS Online.</li>
+          <li class="english">Assisted in developing GIS web applications and dashboards using ArcGIS Online.</li>
+          <li class="arabic">دعم جمع البيانات الميدانية وضمان دمجها بدقة في أنظمة GIS.</li>
+          <li class="english">Supported field data collection and ensured accurate integration into GIS systems.</li>
+          <li class="arabic">إجراء إحصائيات مكانية وإنشاء خرائط موضوعية لدعم رؤى الأعمال.</li>
+          <li class="english">Conducted spatial statistics and created thematic maps to support business insights.</li>
+          <li class="arabic">التعاون مع فرق متعددة الوظائف لتقديم حلول قائمة على GIS.</li>
+          <li class="english">Collaborated with cross-functional teams to deliver GIS-based solutions for ongoing projects.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Certificates -->
+  <section id="certificates">
+    <div class="container-custom">
+      <h2 class="section-title text-center arabic">الدورات والشهادات</h2>
+      <h2 class="section-title text-center english">Courses & Certificates</h2>
+
+      <div class="row g-4">
+        <div class="col-md-6">
+          <div class="cert-card">
+            <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+            <h5 class="arabic">دورة متقدمة في الاستشعار عن بعد ونظم المعلومات الجغرافية</h5>
+            <h5 class="english">Advanced Course in Remote Sensing and GIS</h5>
+            <p class="provider">National Authority for Remote Sensing</p>
+            <p class="arabic">دورة متقدمة تغطي الاستشعار عن بعد وتطبيقات نظم المعلومات الجغرافية.</p>
+            <p class="english">Advanced training in remote sensing and geographic information systems applications.</p>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="cert-card">
+            <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg></div>
+            <h5 class="arabic">شهادة تطبيقات نظم المعلومات الجغرافية</h5>
+            <h5 class="english">Certificate in GIS Applications</h5>
+            <p class="provider">Esri</p>
+            <p class="arabic">شهادة معتمدة من Esri في تطبيقات نظم المعلومات الجغرافية.</p>
+            <p class="english">Esri-certified credential in GIS applications.</p>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="cert-card">
+            <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg></div>
+            <h5 class="arabic">برنامج تدريبي في أنظمة إمداد المياه والصرف الصحي</h5>
+            <h5 class="english">Training Program in Water Supply and Wastewater Management Systems</h5>
+            <p class="provider">Sharqia Drinking Water and Wastewater Company</p>
+            <p class="arabic">تدريب على أنظمة إدارة المياه والصرف الصحي.</p>
+            <p class="english">Training on water supply and wastewater management systems.</p>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="cert-card">
+            <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg></div>
+            <h5 class="arabic">دورة تدريبية في نظم المعلومات الجغرافية</h5>
+            <h5 class="english">Training Course in Geographic Information Systems</h5>
+            <p class="provider">Faculty of Arts, Zagazig University</p>
+            <p class="arabic">دورة تدريبية في أساسيات وتطبيقات نظم المعلومات الجغرافية.</p>
+            <p class="english">Training course in GIS fundamentals and applications.</p>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="cert-card">
+            <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l6 3 8-4 6 3"/><path d="M2 18l6-3 8 4 6-3"/><path d="M8 9v6M16 5v6"/></svg></div>
+            <h5 class="arabic">برنامج متخصص في GIS وتقنيات التحليل المكاني</h5>
+            <h5 class="english">Specialized Program in GIS and Spatial Analysis Techniques</h5>
+            <p class="provider">GIS Navigator UHD Center</p>
+            <p class="arabic">برنامج متخصص في تقنيات التحليل المكاني ونظم المعلومات الجغرافية.</p>
+            <p class="english">Specialized program in spatial analysis techniques and GIS.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact">
+    <div class="container-custom">
+      <p class="section-sub arabic">تواصل</p>
+      <p class="section-sub english">Get in touch</p>
+      <h2 class="section-title arabic">خلينا نتواصل</h2>
+      <h2 class="section-title english">Let's connect</h2>
+
+      <div class="contact-grid">
+        <a href="https://linkedin.com/in/yasser-elzanaty" target="_blank" rel="noopener" class="contact-btn">
+          <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          <span>LinkedIn</span>
+        </a>
+        <a href="https://wa.me/201559332262" target="_blank" rel="noopener" class="contact-btn">
+          <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          <span>WhatsApp</span>
+        </a>
+        <a href="mailto:yasserelzanaty2@gmail.com" class="contact-btn">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+          <span>Email</span>
+        </a>
+      </div>
+      <a href="https://drive.google.com/file/d/1JcWavjmuctkhMK3Iy5UBMgxiRmf0-VDw/view?usp=drive_link" class="cv-btn" target="_blank" rel="noopener">
+        <span class="arabic">تحميل السيرة الذاتية</span><span class="english">Download CV</span> 📄
+      </a>
+    </div>
+  </section>
+
+  <footer class="text-center py-4" style="color: var(--text-muted); font-size: 0.9rem;">
+    <p class="mb-0">© 2026 <span class="arabic">ياسر الزناتي</span><span class="english">Yasser Elzanaty</span> · <span class="arabic">أخصائي نظم معلومات جغرافية</span><span class="english">GIS Specialist</span></p>
+  </footer>
+
+  <button type="button" class="scroll-top hidden" id="scrollTop" aria-label="Scroll to top">↑</button>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function toggleLanguage() {
+      document.body.classList.toggle('lang-en');
+      document.documentElement.dir = document.body.classList.contains('lang-en') ? 'ltr' : 'rtl';
+      document.documentElement.lang = document.body.classList.contains('lang-en') ? 'en' : 'ar';
+    }
+    function toggleTheme() {
+      document.body.classList.toggle('light-theme');
+      document.querySelector('.theme-toggle').textContent = document.body.classList.contains('light-theme') ? '☀️' : '🎨';
+    }
+    window.addEventListener('scroll', function () {
+      var st = window.pageYOffset || document.documentElement.scrollTop;
+      document.getElementById('scrollTop').classList.toggle('hidden', st < 300);
+      document.querySelectorAll('.nav-link-item').forEach(function (a) {
+        var id = a.getAttribute('href').slice(1);
+        if (!id) return;
+        var sec = document.getElementById(id);
+        var active = sec && sec.getBoundingClientRect().top <= 150 && sec.getBoundingClientRect().bottom > 150;
+        a.classList.toggle('active', active);
+      });
+    }, { passive: true });
+    document.getElementById('scrollTop').addEventListener('click', function () {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
+</body>
+</html>
